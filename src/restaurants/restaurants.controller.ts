@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { RestaurantsService } from './restaurants.service';
 import { Restaurant } from './schemas/restaurant.schema';
 
@@ -9,5 +9,13 @@ export class RestaurantsController {
   @Get()
   async getAllRestaurants(): Promise<Restaurant[]> {
     return this.restaurantService.findAll();
+  }
+
+  @Post()
+  async createRestaurant(
+    @Body()
+    restaurant,
+  ): Promise<Restaurant[]> {
+    return this.restaurantService.create(restaurant);
   }
 }

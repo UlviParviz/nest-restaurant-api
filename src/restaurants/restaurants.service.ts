@@ -15,4 +15,10 @@ export class RestaurantsService {
     const restaurants = await this.restaurantModel.find();
     return restaurants;
   }
+
+  //Create new restaurants => POST /restaurants
+  async create(restaurant: Restaurant): Promise<Restaurant[]> {
+    const res = await this.restaurantModel.create(restaurant);
+    return [res];
+  }
 }
