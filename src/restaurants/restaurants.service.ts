@@ -32,4 +32,12 @@ export class RestaurantsService {
 
     return [restaurant];
   }
+
+  //Update restaurant by ID => PUT /restaurants/:id
+  async updateById(id: string, restaurant: Restaurant): Promise<Restaurant[]> {
+    return await this.restaurantModel.findByIdAndUpdate(id, restaurant, {
+      new: true,
+      runValidators: true,
+    });
+  }
 }
