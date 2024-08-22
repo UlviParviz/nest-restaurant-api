@@ -7,36 +7,40 @@ import {
   Post,
   Put,
   Query,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
+
 import { Query as ExpressQuery } from 'express-serve-static-core';
-import { RestaurantsService } from './restaurant.service';
-import { Restaurant } from './schemas/restaurant.schema';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
+import { RestaurantsService } from './restaurant.service';
+import { Restaurant } from './schemas/restaurant.schema';
 
 @Controller('restaurants')
 export class RestaurantsController {
-  constructor(private restaurantService: RestaurantsService) {}
+  constructor(private restaurantsService: RestaurantsService) {}
 
   @Get()
   async getAllRestaurants(@Query() query: ExpressQuery): Promise<Restaurant[]> {
-    return this.restaurantService.findAll(query);
+    return this.restaurantsService.findAll(query);
   }
 
   @Post()
   async createRestaurant(
     @Body()
     restaurant: CreateRestaurantDto,
-  ): Promise<Restaurant[]> {
-    return this.restaurantService.create(restaurant);
+  ): Promise<Restaurant> {
+    return this.restaurantsService.create(restaurant);
   }
 
   @Get(':id')
   async getRestaurant(
     @Param('id')
     id: string,
-  ): Promise<Restaurant[]> {
-    return this.restaurantService.findById(id);
+  ): Promise<Restaurant> {
+    return this.restaurantsService.findById(id);
   }
 
   @Put(':id')
@@ -45,9 +49,10 @@ export class RestaurantsController {
     id: string,
     @Body()
     restaurant: UpdateRestaurantDto,
-  ): Promise<Restaurant[]> {
-    await this.restaurantService.findById(id);
-    return this.restaurantService.updateById(id, restaurant);
+  ): Promise<Restaurant> {
+    await this.restaurantsService.findById(id);
+
+    return this.restaurantsService.updateById(id, restaurant);
   }
 
   @Delete(':id')
@@ -55,14 +60,34 @@ export class RestaurantsController {
     @Param('id')
     id: string,
   ): Promise<{ deleted: Boolean }> {
-    await this.restaurantService.findById(id);
+    const restaurant = await this.restaurantsService.findById(id);
 
-    const restaurant = this.restaurantService.deleteById(id);
+    const isDeleted = await this.restaurantsService.deleteImages(
+      restaurant.images,
+    );
 
-    if (restaurant) {
+    if (isDeleted) {
+      this.restaurantsService.deleteById(id);
+
       return {
         deleted: true,
       };
+    } else {
+      return {
+        deleted: false,
+      };
     }
+  }
+
+  @Put('upload/:id')
+  @UseInterceptors(FilesInterceptor('files'))
+  async uploadFiles(
+    @Param('id') id: string,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    await this.restaurantsService.findById(id);
+
+    const res = await this.restaurantsService.uploadImages(id, files);
+    return res;
   }
 }
