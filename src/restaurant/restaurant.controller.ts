@@ -9,6 +9,7 @@ import {
   Query,
   UseInterceptors,
   UploadedFiles,
+  UseGuards,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
@@ -17,6 +18,9 @@ import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { RestaurantsService } from './restaurant.service';
 import { Restaurant } from './schemas/restaurant.schema';
+import { AuthGuard } from '@nestjs/passport';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { User } from 'src/auth/schemas/user.schema';
 
 @Controller('restaurants')
 export class RestaurantsController {
@@ -24,15 +28,18 @@ export class RestaurantsController {
 
   @Get()
   async getAllRestaurants(@Query() query: ExpressQuery): Promise<Restaurant[]> {
+
     return this.restaurantsService.findAll(query);
   }
 
   @Post()
+  @UseGuards(AuthGuard())
   async createRestaurant(
     @Body()
     restaurant: CreateRestaurantDto,
+    @CurrentUser() user: User,
   ): Promise<Restaurant> {
-    return this.restaurantsService.create(restaurant);
+    return this.restaurantsService.create(restaurant, user);
   }
 
   @Get(':id')
