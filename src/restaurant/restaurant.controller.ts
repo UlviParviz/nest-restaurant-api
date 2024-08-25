@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
@@ -35,7 +36,7 @@ export class RestaurantsController {
 
   @Post()
   @UseGuards(AuthGuard(), RolesGuard)
-  @Roles('admin')
+  @Roles('admin', 'user')
   async createRestaurant(
     @Body()
     restaurant: CreateRestaurantDto,
@@ -59,8 +60,13 @@ export class RestaurantsController {
     id: string,
     @Body()
     restaurant: UpdateRestaurantDto,
+    @CurrentUser() user: User,
   ): Promise<Restaurant> {
-    await this.restaurantsService.findById(id);
+    const res = await this.restaurantsService.findById(id);
+
+    if (res.user.toString() !== user._id.toString()) {
+      throw new ForbiddenException('You cannot update this restaurant');
+    }
 
     return this.restaurantsService.updateById(id, restaurant);
   }
@@ -70,8 +76,13 @@ export class RestaurantsController {
   async deleteRestaurant(
     @Param('id')
     id: string,
+    @CurrentUser() user: User,
   ): Promise<{ deleted: Boolean }> {
     const restaurant = await this.restaurantsService.findById(id);
+
+    if (restaurant.user.toString() !== user._id.toString()) {
+      throw new ForbiddenException('You cannot delete this restaurant');
+    }
 
     const isDeleted = await this.restaurantsService.deleteImages(
       restaurant.images,
