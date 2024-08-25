@@ -21,6 +21,8 @@ import { Restaurant } from './schemas/restaurant.schema';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from 'src/auth/schemas/user.schema';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('restaurants')
 export class RestaurantsController {
@@ -28,12 +30,12 @@ export class RestaurantsController {
 
   @Get()
   async getAllRestaurants(@Query() query: ExpressQuery): Promise<Restaurant[]> {
-
     return this.restaurantsService.findAll(query);
   }
 
   @Post()
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Roles('admin')
   async createRestaurant(
     @Body()
     restaurant: CreateRestaurantDto,
@@ -51,6 +53,7 @@ export class RestaurantsController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard())
   async updateRestaurant(
     @Param('id')
     id: string,
@@ -63,6 +66,7 @@ export class RestaurantsController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard())
   async deleteRestaurant(
     @Param('id')
     id: string,
@@ -87,6 +91,7 @@ export class RestaurantsController {
   }
 
   @Put('upload/:id')
+  @UseGuards(AuthGuard())
   @UseInterceptors(FilesInterceptor('files'))
   async uploadFiles(
     @Param('id') id: string,
