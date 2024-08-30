@@ -1,4 +1,4 @@
-import { Prop, Schema } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { User } from 'src/auth/schemas/user.schema';
 import { Restaurant } from 'src/restaurant/schemas/restaurant.schema';
@@ -34,3 +34,5 @@ export class Meal {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 }
+
+export const MealSchema = SchemaFactory.createForClass(Meal)
