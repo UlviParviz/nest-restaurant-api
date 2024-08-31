@@ -15,6 +15,7 @@ import { User } from '../auth/schemas/user.schema';
 import { MealService } from './meal.service';
 import { Meal } from './schemas/meal.schema';
 import { CreateMealDto } from './dto/create-meal.dto';
+import { UpdateMealDto } from './dto/update-meal.dto';
 
 @Controller('meals')
 export class MealController {
@@ -39,5 +40,25 @@ export class MealController {
     @CurrentUser() user: User,
   ): Promise<Meal> {
     return this.mealService.create(createMealDto, user);
+  }
+
+  @Get(':id')
+  async getMealById(@Param('id') id: string): Promise<Meal> {
+    return this.mealService.findById(id);
+  }
+  @Put(':id')
+  @UseGuards(AuthGuard())
+  async updateMeal(
+    @Body() updateMealDto: UpdateMealDto,
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<Meal> {
+    const meal = await this.mealService.findById(id);
+
+    if (meal.user.toString() !== user._id.toString()) {
+      throw new ForbiddenException('You can not update this meal.');
+    }
+
+    return this.mealService.updateById(id, updateMealDto);
   }
 }
