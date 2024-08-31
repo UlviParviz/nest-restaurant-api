@@ -20,6 +20,18 @@ import { CreateMealDto } from './dto/create-meal.dto';
 export class MealController {
   constructor(private mealService: MealService) {}
 
+  @Get()
+  async getAllMeals(): Promise<Meal[]> {
+    return this.mealService.findAll();
+  }
+
+  @Get('restaurant/:id')
+  async getMealsByRestaurant(
+    @Param('id') restaurantId: string,
+  ): Promise<Meal[]> {
+    return this.mealService.findByRestaurant(restaurantId);
+  }
+
   @Post()
   @UseGuards(AuthGuard())
   createMeal(
