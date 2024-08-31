@@ -1,15 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import { User } from 'src/auth/schemas/user.schema';
-import { Restaurant } from 'src/restaurant/schemas/restaurant.schema';
+import { User } from '../../auth/schemas/user.schema';
 
 export enum Category {
   SOUPS = 'Soups',
   SALADS = 'Salads',
   SANDWICHES = 'Sandwiches',
   PASTA = 'Pasta',
-  DESSERTS = 'Desserts',
-  DRINKS = 'Drinks',
 }
 
 @Schema({
@@ -28,11 +25,11 @@ export class Meal {
   @Prop()
   category: Category;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' })
-  restaurant: Restaurant;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Retaurant' })
+  restaurant: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 }
 
-export const MealSchema = SchemaFactory.createForClass(Meal)
+export const MealSchema = SchemaFactory.createForClass(Meal);
