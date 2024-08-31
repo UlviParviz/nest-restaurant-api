@@ -82,9 +82,36 @@ export class MealService {
 
   // Delete meal by Id  =>  DELETE /meals/:id
   async deleteById(id: string): Promise<{ deleted: Boolean }> {
+    const isValidId = mongoose.isValidObjectId(id);
+
+    if (!isValidId) {
+      throw new BadRequestException('Wrong mongoose ID error.');
+    }
+
+    const meal = await this.mealModel.findById(id);
+
+    if (!meal) {
+      throw new NotFoundException('Meal not found with this ID.');
+    }
+
+    const restaurant = await this.restaurantModel.findById(meal.restaurant);
+
+    if (restaurant) {
+      restaurant.menu = restaurant.menu.filter(
+        (mealId) => mealId.toString() !== id,
+      );
+
+      await restaurant.save();
+    } else {
+      throw new NotFoundException('Restaurant not found this Meal');
+    }
+
     const res = await this.mealModel.findByIdAndDelete(id);
 
-    if (res) return { deleted: true };
-    return { deleted: false };
+    if (res) {
+      return { deleted: true };
+    } else {
+      return { deleted: false };
+    }
   }
 }
