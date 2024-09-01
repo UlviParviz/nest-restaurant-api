@@ -1,26 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { RestaurantsService } from './restaurant.service';
 import { getModelToken } from '@nestjs/mongoose';
-import { Restaurant } from './schemas/restaurant.schema';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
-import { find } from 'rxjs';
-import { UserRoles } from '../auth/schemas/user.schema';
 import APIFeatures from '../utils/features.utils';
-import { create } from 'domain';
+import { UserRoles } from '../auth/schemas/user.schema';
+import { RestaurantsService } from './restaurant.service';
+import { Restaurant } from './schemas/restaurant.schema';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-
-const mockRestaurantService = {
-  find: jest.fn(),
-  create: jest.fn(),
-  findById: jest.fn(),
-};
-
-const mockUser = {
-  _id: '61c0ccf11d7bf83d153d7c06',
-  email: 'ulvi66@gmail.com',
-  name: 'Ulvi',
-  role: UserRoles.USER,
-};
 
 const mockRestaurant = {
   user: '61c0ccf11d7bf83d153d7c06',
@@ -46,6 +31,21 @@ const mockRestaurant = {
   updatedAt: '2021-12-23T16:56:15.127Z',
 };
 
+const mockUser = {
+  _id: '61c0ccf11d7bf83d153d7c06',
+  email: 'ghulam1@gmail.com',
+  name: 'Ghulam',
+  role: UserRoles.USER,
+};
+
+const mockRestaurantService = {
+  find: jest.fn(),
+  create: jest.fn(),
+  findById: jest.fn(),
+  findByIdAndUpdate: jest.fn(),
+  findByIdAndDelete: jest.fn(),
+};
+
 describe('RestaurantService', () => {
   let service: RestaurantsService;
   let model: Model<Restaurant>;
@@ -62,7 +62,6 @@ describe('RestaurantService', () => {
     }).compile();
 
     service = module.get<RestaurantsService>(RestaurantsService);
-
     model = module.get<Model<Restaurant>>(getModelToken(Restaurant.name));
   });
 
@@ -99,23 +98,22 @@ describe('RestaurantService', () => {
     it('should create a new restaurant', async () => {
       jest
         .spyOn(APIFeatures, 'getRestaurantLocation')
-        .mockImplementation(() => Promise.resolve(mockRestaurant.location));
+        .mockImplementationOnce(() => Promise.resolve(mockRestaurant.location));
 
       jest
         .spyOn(model, 'create')
-        .mockImplementationOnce(() => Promise.resolve(mockRestaurant) as any);
+        .mockImplementationOnce(() => Promise.resolve(mockRestaurant as any));
 
       const result = await service.create(
         newRestaurant as any,
         mockUser as any,
       );
-
       expect(result).toEqual(mockRestaurant);
     });
   });
 
   describe('findById', () => {
-    it('should get restaurant by id', async () => {
+    it('should get restaurant by Id', async () => {
       jest
         .spyOn(model, 'findById')
         .mockResolvedValueOnce(mockRestaurant as any);
@@ -124,19 +122,36 @@ describe('RestaurantService', () => {
       expect(result).toEqual(mockRestaurant);
     });
 
-    it('should throw wrong mongoose id error', async () => {
+    it('should throw wrong moongose id error', async () => {
       await expect(service.findById('wrongid')).rejects.toThrow(
         BadRequestException,
       );
     });
 
-    it('should throw restaurant not found error', async () => {
-      const mockError = new NotFoundException('Restaurant not found');
+    it('should throw restaruant not found error', async () => {
+      const mockError = new NotFoundException('Restaurant not found.');
       jest.spyOn(model, 'findById').mockRejectedValue(mockError);
 
       await expect(service.findById(mockRestaurant._id)).rejects.toThrow(
-        BadRequestException,
+        NotFoundException,
       );
+    });
+  });
+
+  describe('updateById', () => {
+    it('should update the restaurant', async () => {
+      const restaurant = { ...mockRestaurant, name: 'Updated name' };
+      const updateRestaurant = { name: 'Updated name' };
+
+      jest
+        .spyOn(model, 'findByIdAndUpdate')
+        .mockResolvedValueOnce(restaurant as any);
+
+      const updatedRestaurant = await service.updateById(
+        restaurant._id,
+        updateRestaurant as any,
+      );
+      expect(updatedRestaurant.name).toEqual(updateRestaurant.name);
     });
   });
 });
