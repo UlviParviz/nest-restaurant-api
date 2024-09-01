@@ -1,7 +1,7 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import { User } from 'src/auth/schemas/user.schema';
-import { Meal } from 'src/meal/schemas/meal.schema';
+import { User } from '../../auth/schemas/user.schema';
+import { Meal } from '../../meal/schemas/meal.schema';
 
 @Schema()
 export class Location {

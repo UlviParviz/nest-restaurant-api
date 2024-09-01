@@ -21,9 +21,9 @@ import { RestaurantsService } from './restaurant.service';
 import { Restaurant } from './schemas/restaurant.schema';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { User } from 'src/auth/schemas/user.schema';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { User } from '../auth/schemas/user.schema';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Controller('restaurants')
 export class RestaurantsController {

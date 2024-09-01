@@ -8,7 +8,7 @@ import { Query } from 'express-serve-static-core';
 import * as mongoose from 'mongoose';
 import APIFeatures from '../utils/features.utils';
 import { Restaurant } from './schemas/restaurant.schema';
-import { User } from 'src/auth/schemas/user.schema';
+import { User } from '../auth/schemas/user.schema';
 
 @Injectable()
 export class RestaurantsService {
