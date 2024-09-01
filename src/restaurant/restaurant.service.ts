@@ -40,6 +40,12 @@ export class RestaurantsService {
     return restaurants;
   }
 
+  // Get all Restaurants Admin  =>  GET  /restaurants/admin
+  async findAllAdmin(): Promise<Restaurant[]> {
+    const restaurants = await this.restaurantModel.find();
+    return restaurants;
+  }
+
   // Create new Restaurant  =>  POST  /restaurants
   async create(restaurant: Restaurant, user: User): Promise<Restaurant> {
     const location = await APIFeatures.getRestaurantLocation(

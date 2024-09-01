@@ -7,10 +7,12 @@ import { find } from 'rxjs';
 import { UserRoles } from '../auth/schemas/user.schema';
 import APIFeatures from '../utils/features.utils';
 import { create } from 'domain';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 const mockRestaurantService = {
   find: jest.fn(),
   create: jest.fn(),
+  findById: jest.fn(),
 };
 
 const mockUser = {
@@ -109,6 +111,32 @@ describe('RestaurantService', () => {
       );
 
       expect(result).toEqual(mockRestaurant);
+    });
+  });
+
+  describe('findById', () => {
+    it('should get restaurant by id', async () => {
+      jest
+        .spyOn(model, 'findById')
+        .mockResolvedValueOnce(mockRestaurant as any);
+
+      const result = await service.findById(mockRestaurant._id);
+      expect(result).toEqual(mockRestaurant);
+    });
+
+    it('should throw wrong mongoose id error', async () => {
+      await expect(service.findById('wrongid')).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('should throw restaurant not found error', async () => {
+      const mockError = new NotFoundException('Restaurant not found');
+      jest.spyOn(model, 'findById').mockRejectedValue(mockError);
+
+      await expect(service.findById(mockRestaurant._id)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 });

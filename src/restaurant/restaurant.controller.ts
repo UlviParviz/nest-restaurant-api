@@ -34,6 +34,11 @@ export class RestaurantsController {
     return this.restaurantsService.findAll(query);
   }
 
+  @Get('admin')
+  async getAllRestaurantsAdmin(): Promise<Restaurant[]> {
+    return this.restaurantsService.findAllAdmin();
+  }
+
   @Post()
   @UseGuards(AuthGuard(), RolesGuard)
   @Roles('admin', 'user')
