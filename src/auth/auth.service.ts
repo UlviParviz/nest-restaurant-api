@@ -9,7 +9,7 @@ import { Model } from 'mongoose';
 import { SignUpDto } from './dto/signup.dto';
 import * as bcrypt from 'bcryptjs';
 import { LoginDto } from './dto/login.dto';
-import APIFeatures from 'src/utils/features.utils';
+import APIFeatures from '../utils/features.utils';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
