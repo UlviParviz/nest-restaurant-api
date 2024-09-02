@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RestaurantsController } from './restaurant.controller';
 import { RestaurantsService } from './restaurant.service';
 import { UserRoles } from '../auth/schemas/user.schema';
+import { create } from 'domain';
 
 const mockRestaurant = {
   user: '61c0ccf11d7bf83d153d7c06',
@@ -36,6 +37,7 @@ const mockUser = {
 
 const mockRestaurantService = {
   findAll: jest.fn().mockResolvedValueOnce([mockRestaurant]),
+  create: jest.fn(),
 };
 describe('RestaurantController', () => {
   let controller: RestaurantsController;
@@ -68,6 +70,31 @@ describe('RestaurantController', () => {
 
       expect(service.findAll).toHaveBeenCalled();
       expect(result).toEqual([mockRestaurant]);
+    });
+  });
+
+  describe('createNewRestaurant', () => {
+    it('should create new restaurant', async () => {
+      const newRestaurant = {
+        category: 'Fast Food',
+        address: '200 Olympic Dr, Stafford, VS, 22554',
+        phoneNo: 9788246116,
+        email: 'ghulam@gamil.com',
+        description: 'This is just a description',
+        name: 'Retaurant 4',
+      };
+
+      mockRestaurantService.create = jest
+        .fn()
+        .mockResolvedValueOnce(mockRestaurant);
+
+      const result = await controller.createRestaurant(
+        newRestaurant as any,
+        mockUser as any,
+      );
+
+      expect(service.create).toHaveBeenCalled();
+      expect(result).toEqual(mockRestaurant);
     });
   });
 });
