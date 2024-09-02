@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RestaurantsController } from './restaurant.controller';
 import { RestaurantsService } from './restaurant.service';
 import { UserRoles } from '../auth/schemas/user.schema';
-import { create } from 'domain';
 
 const mockRestaurant = {
   user: '61c0ccf11d7bf83d153d7c06',
@@ -30,14 +29,15 @@ const mockRestaurant = {
 
 const mockUser = {
   _id: '61c0ccf11d7bf83d153d7c06',
-  email: 'ghulam1@gmail.com',
-  name: 'Ghulam',
+  email: 'ulvi666@gmail.com',
+  name: 'Ulvi',
   role: UserRoles.USER,
 };
 
 const mockRestaurantService = {
   findAll: jest.fn().mockResolvedValueOnce([mockRestaurant]),
   create: jest.fn(),
+  findById: jest.fn().mockResolvedValueOnce(mockRestaurant),
 };
 describe('RestaurantController', () => {
   let controller: RestaurantsController;
@@ -94,6 +94,15 @@ describe('RestaurantController', () => {
       );
 
       expect(service.create).toHaveBeenCalled();
+      expect(result).toEqual(mockRestaurant);
+    });
+  });
+
+  describe('getRestaurantById', () => {
+    it('should get restaurant by id', async () => {
+      const result = await controller.getRestaurant(mockRestaurant._id);
+
+      expect(service.findById).toHaveBeenCalled();
       expect(result).toEqual(mockRestaurant);
     });
   });
