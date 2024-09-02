@@ -20,7 +20,7 @@ import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { RestaurantsService } from './restaurant.service';
 import { Restaurant } from './schemas/restaurant.schema';
 import { AuthGuard } from '@nestjs/passport';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { User } from '../auth/schemas/user.schema';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
