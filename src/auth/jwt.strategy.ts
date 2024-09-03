@@ -6,7 +6,7 @@ import { User } from './schemas/user.schema';
 import { Model } from 'mongoose';
 
 @Injectable()
-export class JwtStraregy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @InjectModel(User.name)
     private userModel: Model<User>,

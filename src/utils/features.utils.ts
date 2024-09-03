@@ -3,10 +3,10 @@ import { JwtService } from '@nestjs/jwt';
 import { S3 } from 'aws-sdk';
 import { Location } from 'src/restaurant/schemas/restaurant.schema';
 
-const nodeGeoCoder = require('node-geocoder');
+const nodeGeoCoder = require('node-geocoder') as any;
 
 export default class APIFeatures {
-  static async getRestaurantLocation(address) {
+  static async getRestaurantLocation(address: any) {
     try {
       const options = {
         provider: process.env.GEOCODER_PROVIDER,
@@ -35,7 +35,7 @@ export default class APIFeatures {
   }
 
   //Upload Images
-  static async upload(files) {
+  static async upload(files: any) {
     return new Promise((resolve, reject) => {
       const s3 = new S3({
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -44,7 +44,7 @@ export default class APIFeatures {
 
       let images = [];
 
-      files.forEach(async (file) => {
+      files.forEach(async (file: any) => {
         const splitFile = file.originalname.split('.');
         const random = Date.now();
         const fileName = `${splitFile[0]}_${random}.${splitFile[1]}`;
@@ -105,7 +105,7 @@ export default class APIFeatures {
   ): Promise<string> {
     const payload = { id: userId };
     const token = await jwtService.sign(payload);
-    
+
     return token;
   }
 }
