@@ -8,7 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { User } from '../auth/schemas/user.schema';
 import { Meal } from './schemas/meal.schema';
-import { Restaurant } from 'src/restaurant/schemas/restaurant.schema';
+import { Restaurant } from '../restaurant/schemas/restaurant.schema';
 
 @Injectable()
 export class MealService {

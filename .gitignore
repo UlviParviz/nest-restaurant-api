@@ -2,8 +2,6 @@
 /dist
 /node_modules
 
-.env.development
-.env.test
 
 # Logs
 logs

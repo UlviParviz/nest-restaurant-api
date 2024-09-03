@@ -4,7 +4,7 @@ import { AuthModule } from '../auth/auth.module';
 import { MealController } from './meal.controller';
 import { MealService } from './meal.service';
 import { MealSchema } from './schemas/meal.schema';
-import { RestaurantsModule } from 'src/restaurant/restaurant.module';
+import { RestaurantsModule } from '../restaurant/restaurant.module';
 
 @Module({
   imports: [
